@@ -1,5 +1,8 @@
 // use rocket::{get, launch, routes};
 use rocket::{get, post, put, delete, routes};
+// use rocket::serde::{Serialize, Deserialize};
+use rocket::serde::json::{json, Value};
+// use rocket::serde::json::{Json, Value};
 
 
 #[get("/")]
@@ -44,12 +47,19 @@ async fn test_delete(_id: usize) -> String {
     "test delete method".to_string()
 }
 
+// restful get return json
+#[get("/test_json")]
+async fn test_get_json() -> Value {
+    json!({"test": "test_get"})
+}
+
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     rocket::build()
         .mount("/hello", routes![hello])
         .mount("/test", routes![test_get, test_post, test_put, test_delete])
+        .mount("/test_json", routes![test_get_json])
         .launch().await?;
     Ok(())
 }
