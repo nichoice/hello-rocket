@@ -4,9 +4,15 @@ use rocket::{get, post, put, delete, routes};
 use rocket::serde::json::{json, Value};
 // use rocket::serde::json::{Json, Value};
 
+use rocket_sync_db_pools::{database, diesel};
 
 mod controller;
 use controller::system::get_users;
+
+
+#[database("sqlite_logs")]
+struct LogsDbConn(diesel::SqliteConnection);
+
 
 #[get("/")]
 async fn hello() -> String {
@@ -64,6 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .mount("/test", routes![test_get, test_post, test_put, test_delete])
         .mount("/test_json", routes![test_get_json])
         .mount("/system", routes![get_users])
+        .attach(LogsDbConn::fairing())
         .launch().await?;
     Ok(())
 }
