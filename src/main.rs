@@ -6,7 +6,7 @@ use rocket::serde::json::{json, Value};
 
 
 mod controller;
-
+use controller::system::get_users;
 
 #[get("/")]
 async fn hello() -> String {
@@ -63,7 +63,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .mount("/hello", routes![hello])
         .mount("/test", routes![test_get, test_post, test_put, test_delete])
         .mount("/test_json", routes![test_get_json])
-        .mount("/system", routes![controller::system::get_users])
+        .mount("/system", routes![get_users])
         .launch().await?;
     Ok(())
 }
