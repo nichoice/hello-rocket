@@ -1,5 +1,5 @@
 // use rocket::{get, launch, routes};
-use rocket::{get, post, put, delete, routes};
+use rocket::{catch, catchers, get, post, put, delete, routes};
 // use rocket::serde::{Serialize, Deserialize};
 use rocket::serde::json::{json, Value};
 // use rocket::serde::json::{Json, Value};
@@ -63,6 +63,12 @@ async fn test_get_json() -> Value {
 }
 
 
+#[catch(404)]
+async fn not_found_url() -> Value {
+    json!("not found")
+}
+
+
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     rocket::build()
@@ -70,6 +76,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .mount("/test", routes![test_get, test_post, test_put, test_delete])
         .mount("/test_json", routes![test_get_json])
         .mount("/system", routes![get_users])
+        .register("/", catchers!(not_found_url))
         .attach(LogsDbConn::fairing())
         .launch().await?;
     Ok(())
