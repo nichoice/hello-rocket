@@ -1,17 +1,28 @@
-// use rocket::{get, launch, routes};
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+
+
 use rocket::{catch, catchers, get, post, put, delete, routes};
-// use rocket::serde::{Serialize, Deserialize};
 use rocket::serde::json::{json, Value};
-// use rocket::serde::json::{Json, Value};
+use rocket_sync_db_pools::{database};
 
-use rocket_sync_db_pools::{database, diesel};
 
-mod controller;
+pub mod models;
+pub mod services;
+pub mod schema;
+pub mod controller;
+
+
 use controller::system::get_users;
 
 
+embed_migrations!("migrations");
+
+
 #[database("sqlite_logs")]
-struct LogsDbConn(diesel::SqliteConnection);
+pub struct LogsDbConn(diesel::SqliteConnection);
 
 
 #[get("/")]
